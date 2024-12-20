@@ -17,6 +17,24 @@ export interface SignatureData {
   logoAlign: 'left' | 'top';
 }
 
+function OnEscape({ trigger }: { trigger: () => void }) {
+  const handleEscape = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      trigger();
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
+
+  return null;
+}
+
 function App() {
   const [signatureData, setSignatureData] = useState<SignatureData>({
     primaryLine: '',
@@ -30,11 +48,14 @@ function App() {
     logoAlign: 'left',
   });
   const [showCode, setShowCode] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
 
   const hasData = objectHasData({
     ...signatureData,
   }, ['logoWidth', 'logoRatio', 'logoAlign']);
+
+
 
 
   const generateHTML = () => {
@@ -69,7 +90,7 @@ function App() {
     try {
 
       const imageUrl = await generateSignatureImage(previewRef.current);
-      window.open(imageUrl, '_blank');
+      setImageUrl(imageUrl);
     } catch (error) {
       console.error('Failed to generate signature image:', error);
     }
@@ -149,6 +170,22 @@ function App() {
           </div>
         </div>
       </div>
+
+      {imageUrl && (
+        <dialog open>
+            <div className="fixed inset-0 flex items-center justify-center">
+              <OnEscape trigger={() => {
+                setImageUrl(null);
+              }} />
+              <div className='absolute inset-0  bg-black bg-opacity-50' onClick={() => {
+                setImageUrl(null);
+              }}></div>
+              <div className='p-6 bg-zinc-600 relative'>
+                <img src={imageUrl} alt="Generated signature" />
+              </div>
+            </div>
+        </dialog>
+      )}
     </div>
   );
 }
