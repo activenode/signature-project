@@ -1,27 +1,13 @@
 import React, { useState, ChangeEvent } from 'react';
 import { Building2, Phone, Mail, MapPin, Upload } from 'lucide-react';
 import { LogoSizeControl } from './LogoSizeControl';
+import { SignatureData } from '../App';
 
-interface SignatureData {
-  primaryLine: string;
-  optional: string;
-  address: string;
-  phone: string;
-  email: string;
-  logo: string;
-  logoSize: number;
-}
 
-export default function SignatureForm({ onUpdate }: { onUpdate: (data: SignatureData) => void }) {
-  const [formData, setFormData] = useState<SignatureData>({
-    primaryLine: '',
-    optional: '',
-    address: '',
-    phone: '',
-    email: '',
-    logo: '',
-    logoSize: 100,
-  });
+
+export default function SignatureForm({ onUpdate, data }: { onUpdate: (data: SignatureData) => void, data: SignatureData }) {
+  const [formData, setFormData] = useState<SignatureData>(data);
+  const [imageRatio, setImageRatio] = useState(1);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -49,11 +35,13 @@ export default function SignatureForm({ onUpdate }: { onUpdate: (data: Signature
           canvas.width = MAX_WIDTH;
           canvas.height = img.height * scale;
 
+          setImageRatio(img.width / img.height);
+
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
 
           const resizedBase64 = canvas.toDataURL('image/png');
-          const newData = { ...formData, logo: resizedBase64 };
+          const newData = { ...formData, logo: resizedBase64, logoRatio: imageRatio };
           setFormData(newData);
           onUpdate(newData);
         };
@@ -104,7 +92,7 @@ export default function SignatureForm({ onUpdate }: { onUpdate: (data: Signature
         </div>
         {formData.logo && (
           <LogoSizeControl
-            value={formData.logoSize}
+            value={formData.logoWidth}
             onChange={handleLogoSizeChange}
           />
         )}

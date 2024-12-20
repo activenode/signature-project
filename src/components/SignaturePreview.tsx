@@ -14,13 +14,14 @@ interface SignatureData {
 const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(
   ({ data }, ref) => {
     // Calculate the actual width in pixels based on the max-width and percentage
-    const logoWidth = (120 * data.logoSize) / 100;
+    const logoWidth = data.logoSize;
 
     const baseTextColor = "#6b7280";
     const primaryLineColor = "black";
     const emailTextColor = "#2563eb";
-    const hasTextData = objectHasData(data, ["logoSize", "logo"]);
     const baseTextSize = "17px";
+
+    const hasTextData = objectHasData(data, ["logoWidth", "logoRatio"]);
 
     return (
       <div
@@ -38,25 +39,23 @@ const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(
           >
             <tbody>
               <tr>
-                <td
-                  style={{
-                    verticalAlign: "top",
-                    paddingRight: "15px",
-                    width: data.logo ? `${logoWidth}px` : "0",
-                    minWidth: data.logo ? `${logoWidth}px` : "0",
-                  }}
-                >
-                  {data.logo && (
-                    <img
-                      src={data.logo}
-                      alt="Company logo"
-                      style={{
-                        width: "100%",
-                        height: "auto",
-                      }}
-                    />
-                  )}
-                </td>
+                {data.logo && (
+                  <td
+                    style={{
+                      verticalAlign: "top",
+                      paddingRight: "15px",
+                      width: data.logo ? `${logoWidth}px` : "0",
+                      minWidth: data.logo ? `${logoWidth}px` : "0",
+                    }}
+                  >
+                    {data.logo && (
+                      <img
+                        src={data.logo}
+                        alt="Company logo"
+                        width={logoWidth}
+                      />
+                    )}
+                  </td>)}
                 <td style={{ verticalAlign: "top", color: baseTextColor }}>
                   {!hasTextData && (
                     <em className="opacity-50">
@@ -134,6 +133,8 @@ const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(
                       </div>
                     </>
                   )}
+
+                  <div className="h-1"></div>
                 </td>
               </tr>
             </tbody>

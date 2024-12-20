@@ -5,14 +5,15 @@ import { Code, Image } from 'lucide-react';
 import { generateSignatureImage } from './utils/imageGeneration';
 import { objectHasData } from './utils/hasData';
 
-interface SignatureData {
+export interface SignatureData {
   primaryLine: string;
   optional: string;
   address: string;
   phone: string;
   email: string;
   logo: string;
-  logoSize: number;
+  logoWidth: number;
+  logoRatio: number;
 }
 
 function App() {
@@ -23,7 +24,8 @@ function App() {
     phone: '',
     email: '',
     logo: '',
-    logoSize: 100,
+    logoWidth: 100,
+    logoRatio: 1,
   });
   const [showCode, setShowCode] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -35,13 +37,14 @@ function App() {
 
 
   const generateHTML = () => {
-    const logoWidth = (120 * signatureData.logoSize) / 100;
+    const logoWidth = signatureData.logoWidth;
+    const logoHeight = logoWidth / signatureData.logoRatio;
 
     return `<table cellpadding="0" cellspacing="0" style="font-family: Arial, sans-serif;">
   <tbody>
     <tr>
       <td style="vertical-align: top; padding-right: 15px; width: ${signatureData.logo ? `${logoWidth}px` : '0'}; min-width: ${signatureData.logo ? `${logoWidth}px` : '0'}">
-        ${signatureData.logo ? `<img src="${signatureData.logo}" alt="Company logo" style="width: 100%; height: auto;" />` : ''}
+        ${signatureData.logo ? `<img src="${signatureData.logo}" alt="" width="${logoWidth}" height="${logoHeight}" />` : ''}
       </td>
       <td style="vertical-align: top;">
         ${signatureData.primaryLine ? `<div style="font-size: 16px; font-weight: bold; color: #2563eb; margin-bottom: 4px;">${signatureData.primaryLine}</div>` : ''}
@@ -63,6 +66,7 @@ function App() {
     if (!previewRef.current) return;
 
     try {
+
       const imageUrl = await generateSignatureImage(previewRef.current);
       window.open(imageUrl, '_blank');
     } catch (error) {
@@ -93,7 +97,7 @@ function App() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
               <h2 className="text-xl font-semibold mb-4">Your Information</h2>
-              <SignatureForm onUpdate={setSignatureData} />
+              <SignatureForm onUpdate={setSignatureData} data={signatureData} />
             </div>
 
             <div>

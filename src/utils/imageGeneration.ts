@@ -7,7 +7,11 @@ export const generateSignatureImage = async (elementRef: HTMLElement): Promise<s
       backgroundColor: '#ffffff',
       logging: false,
     });
-    return canvas.toDataURL('image/png');
+    const result = canvas.toDataURL('image/png');
+
+
+
+    return result;
   } catch (error) {
     console.error('Error generating signature image:', error);
     throw error;
