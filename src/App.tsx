@@ -32,31 +32,19 @@ function App() {
 
   const hasData = objectHasData({
     ...signatureData,
-  }, ['logoSize']);
+  }, ['logoWidth', 'logoRatio']);
 
 
 
   const generateHTML = () => {
-    const logoWidth = signatureData.logoWidth;
-    const logoHeight = logoWidth / signatureData.logoRatio;
+    const fragment = document.createElement('template');
 
-    return `<table cellpadding="0" cellspacing="0" style="font-family: Arial, sans-serif;">
-  <tbody>
-    <tr>
-      <td style="vertical-align: top; padding-right: 15px; width: ${signatureData.logo ? `${logoWidth}px` : '0'}; min-width: ${signatureData.logo ? `${logoWidth}px` : '0'}">
-        ${signatureData.logo ? `<img src="${signatureData.logo}" alt="" width="${logoWidth}" height="${logoHeight}" />` : ''}
-      </td>
-      <td style="vertical-align: top;">
-        ${signatureData.primaryLine ? `<div style="font-size: 16px; font-weight: bold; color: #2563eb; margin-bottom: 4px;">${signatureData.primaryLine}</div>` : ''}
-        ${signatureData.optional ? `<div style="font-size: 14px; color: #4b5563; margin-bottom: 4px;">${signatureData.optional}</div>` : ''}
-        ${signatureData.address ? `<div style="font-size: 12px; color: #6b7280; margin-bottom: 4px; white-space: pre-line;">${signatureData.address}</div>` : ''}
-        ${signatureData.phone ? `<div style="font-size: 12px; color: #6b7280; margin-bottom: 2px;">Phone: ${signatureData.phone}</div>` : ''}
-        ${signatureData.email ? `<div style="font-size: 12px; color: #6b7280;">Email: <a href="mailto:${signatureData.email}" style="color: #2563eb; text-decoration: none;">${signatureData.email}</a></div>` : ''}
-      </td>
-    </tr>
-  </tbody>
-</table>`;
-  };
+    fragment.innerHTML = previewRef.current?.querySelector('.prose')!.innerHTML as string;
+
+    // console.log('fragment', previewRef.current?.innerHTML);
+
+    return fragment.innerHTML;
+  }
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(generateHTML());

@@ -17,7 +17,7 @@ export default function SignatureForm({ onUpdate, data }: { onUpdate: (data: Sig
   };
 
   const handleLogoSizeChange = (size: number) => {
-    const newData = { ...formData, logoSize: size };
+    const newData = { ...formData, logoWidth: size };
     setFormData(newData);
     onUpdate(newData);
   };

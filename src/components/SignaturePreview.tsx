@@ -1,20 +1,12 @@
 import React, { forwardRef } from "react";
 import { objectHasData } from "../utils/hasData";
-
-interface SignatureData {
-  primaryLine: string;
-  optional: string;
-  address: string;
-  phone: string;
-  email: string;
-  logo: string;
-  logoSize: number;
-}
+import { SignatureData } from "../App";
 
 const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(
   ({ data }, ref) => {
     // Calculate the actual width in pixels based on the max-width and percentage
-    const logoWidth = data.logoSize;
+    const logoWidth = data.logoWidth;
+    const logoHeight = logoWidth / data.logoRatio;
 
     const baseTextColor = "#6b7280";
     const primaryLineColor = "black";
@@ -44,15 +36,14 @@ const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(
                     style={{
                       verticalAlign: "top",
                       paddingRight: "15px",
-                      width: data.logo ? `${logoWidth}px` : "0",
-                      minWidth: data.logo ? `${logoWidth}px` : "0",
                     }}
                   >
                     {data.logo && (
                       <img
                         src={data.logo}
                         alt="Company logo"
-                        width={logoWidth}
+                        width={Math.round(logoWidth)}
+                        height={Math.round(logoHeight)}
                       />
                     )}
                   </td>)}
@@ -95,9 +86,13 @@ const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(
                   {(data.phone || data.email) && (
                     <>
                       {" "}
-                      <hr className="my-6" />
+                      <hr style={{height: 0, marginTop: '1em', marginBottom: '1em'}} />
 
-                      <div className="flex flex-col gap-2">
+                      <div style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "4px",
+                      }}>
                       {data.phone && (
                         <div
                           style={{ fontSize: "0.92em", marginBottom: "2px" }}
@@ -106,7 +101,7 @@ const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(
                             style={{ fontSize: "0.8em", width: "44px" }}
                             className="inline-block relative opacity-75"
                           >
-                            TEL:
+                            TEL: &nbsp; {' '}
                           </span>
                           {data.phone}
                         </div>
@@ -117,7 +112,7 @@ const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(
                             style={{ fontSize: "0.8em", width: "44px" }}
                             className="inline-block relative opacity-75"
                           >
-                            MAIL:
+                            MAIL: &nbsp; {' '}
                           </span>
                           <a
                             href={`mailto:${data.email}`}
@@ -134,7 +129,7 @@ const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(
                     </>
                   )}
 
-                  <div className="h-1"></div>
+                  <div style={{fontSize: '0.2em'}}>&nbsp;</div>
                 </td>
               </tr>
             </tbody>
