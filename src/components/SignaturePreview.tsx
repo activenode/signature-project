@@ -8,12 +8,27 @@ const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(
     const logoWidth = data.logoWidth;
     const logoHeight = logoWidth / data.logoRatio;
 
+
+
     const baseTextColor = "#6b7280";
     const primaryLineColor = "black";
     const emailTextColor = "#2563eb";
     const baseTextSize = "17px";
 
-    const hasTextData = objectHasData(data, ["logoWidth", "logoRatio"]);
+    const hasTextData = objectHasData(data, [
+      "logoWidth",
+      "logoRatio",
+      "logoAlign",
+    ]);
+
+    const logo = !data.logo ? null : (
+      <img
+        src={data.logo}
+        alt="Company logo"
+        width={logoWidth}
+        height={logoHeight}
+      />
+    );
 
     return (
       <div
@@ -30,23 +45,29 @@ const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(
             style={{ fontFamily: "Arial, sans-serif" }}
           >
             <tbody>
+              {data.logoAlign === "top" && (
+                <tr>
+                  <td
+                    style={{
+                      verticalAlign: "top",
+                      paddingBottom: "15px",
+                    }}
+                  >
+                    {logo}
+                  </td>
+                </tr>
+              )}
               <tr>
-                {data.logo && (
+                {data.logoAlign === "left" && (
                   <td
                     style={{
                       verticalAlign: "top",
                       paddingRight: "15px",
                     }}
                   >
-                    {data.logo && (
-                      <img
-                        src={data.logo}
-                        alt="Company logo"
-                        width={Math.round(logoWidth)}
-                        height={Math.round(logoHeight)}
-                      />
-                    )}
-                  </td>)}
+                    {logo}
+                  </td>
+                )}
                 <td style={{ verticalAlign: "top", color: baseTextColor }}>
                   {!hasTextData && (
                     <em className="opacity-50">
@@ -86,50 +107,57 @@ const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(
                   {(data.phone || data.email) && (
                     <>
                       {" "}
-                      <hr style={{height: 0, marginTop: '1em', marginBottom: '1em'}} />
-
-                      <div style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "4px",
-                      }}>
-                      {data.phone && (
-                        <div
-                          style={{ fontSize: "0.92em", marginBottom: "2px" }}
-                        >
-                          <span
-                            style={{ fontSize: "0.8em", width: "44px" }}
-                            className="inline-block relative opacity-75"
+                      <hr
+                        style={{
+                          height: 0,
+                          marginTop: "1em",
+                          marginBottom: "1em",
+                        }}
+                      />
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "4px",
+                        }}
+                      >
+                        {data.phone && (
+                          <div
+                            style={{ fontSize: "0.92em", marginBottom: "2px" }}
                           >
-                            TEL: &nbsp; {' '}
-                          </span>
-                          {data.phone}
-                        </div>
-                      )}
-                      {data.email && (
-                        <div style={{ fontSize: "0.92em" }}>
-                          <span
-                            style={{ fontSize: "0.8em", width: "44px" }}
-                            className="inline-block relative opacity-75"
-                          >
-                            MAIL: &nbsp; {' '}
-                          </span>
-                          <a
-                            href={`mailto:${data.email}`}
-                            style={{
-                              color: emailTextColor,
-                              textDecoration: "none",
-                            }}
-                          >
-                            {data.email}
-                          </a>
-                        </div>
-                      )}
+                            <span
+                              style={{ fontSize: "0.8em", width: "44px" }}
+                              className="inline-block relative opacity-75"
+                            >
+                              TEL: &nbsp;{" "}
+                            </span>
+                            {data.phone}
+                          </div>
+                        )}
+                        {data.email && (
+                          <div style={{ fontSize: "0.92em" }}>
+                            <span
+                              style={{ fontSize: "0.8em", width: "44px" }}
+                              className="inline-block relative opacity-75"
+                            >
+                              MAIL: &nbsp;{" "}
+                            </span>
+                            <a
+                              href={`mailto:${data.email}`}
+                              style={{
+                                color: emailTextColor,
+                                textDecoration: "none",
+                              }}
+                            >
+                              {data.email}
+                            </a>
+                          </div>
+                        )}
                       </div>
                     </>
                   )}
 
-                  <div style={{fontSize: '0.2em'}}>&nbsp;</div>
+                  <div style={{ fontSize: "0.2em" }}>&nbsp;</div>
                 </td>
               </tr>
             </tbody>

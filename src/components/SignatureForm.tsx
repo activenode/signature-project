@@ -1,23 +1,28 @@
-import React, { useState, ChangeEvent } from 'react';
-import { Building2, Phone, Mail, MapPin, Upload } from 'lucide-react';
-import { LogoSizeControl } from './LogoSizeControl';
-import { SignatureData } from '../App';
+import React, { useState, ChangeEvent } from "react";
+import { Building2, Phone, Mail, MapPin, Upload } from "lucide-react";
+import { LogoControl } from "./LogoControl";
+import { SignatureData } from "../App";
 
-
-
-export default function SignatureForm({ onUpdate, data }: { onUpdate: (data: SignatureData) => void, data: SignatureData }) {
+export default function SignatureForm({
+  onUpdate,
+  data,
+}: {
+  onUpdate: (data: SignatureData) => void;
+  data: SignatureData;
+}) {
   const [formData, setFormData] = useState<SignatureData>(data);
-  const [imageRatio, setImageRatio] = useState(1);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     const newData = { ...formData, [name]: value };
     setFormData(newData);
     onUpdate(newData);
   };
 
-  const handleLogoSizeChange = (size: number) => {
-    const newData = { ...formData, logoWidth: size };
+  const handleLogoConfigChange = (size: number, align: "left" | "top") => {
+    const newData = { ...formData, logoWidth: size, logoAlign: align };
     setFormData(newData);
     onUpdate(newData);
   };
@@ -29,19 +34,27 @@ export default function SignatureForm({ onUpdate, data }: { onUpdate: (data: Sig
       reader.onload = (event) => {
         const img = new Image();
         img.onload = () => {
-          const canvas = document.createElement('canvas');
+          const canvas = document.createElement("canvas");
           const MAX_WIDTH = 200;
           const scale = MAX_WIDTH / img.width;
           canvas.width = MAX_WIDTH;
           canvas.height = img.height * scale;
 
-          setImageRatio(img.width / img.height);
+          console.log("canvas", canvas.width, canvas.height);
 
-          const ctx = canvas.getContext('2d');
+          const imageRatio = canvas.width / canvas.height;
+
+
+          const ctx = canvas.getContext("2d");
           ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-          const resizedBase64 = canvas.toDataURL('image/png');
-          const newData = { ...formData, logo: resizedBase64, logoRatio: imageRatio };
+          const resizedBase64 = canvas.toDataURL("image/png");
+          const newData = {
+            ...formData,
+            logo: resizedBase64,
+            logoRatio: imageRatio,
+          };
+
           setFormData(newData);
           onUpdate(newData);
         };
@@ -52,7 +65,7 @@ export default function SignatureForm({ onUpdate, data }: { onUpdate: (data: Sig
   };
 
   return (
-    <div className="space-y-4 w-full max-w-md">
+    <div className="grid grid-cols-1 w-full max-w-md">
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">
           Business Logo
@@ -81,7 +94,7 @@ export default function SignatureForm({ onUpdate, data }: { onUpdate: (data: Sig
               type="button"
               className="text-sm text-red-500 hover:text-red-700 bg-gray-200 p-2 rounded-md"
               onClick={() => {
-                const newData = { ...formData, logo: '' };
+                const newData = { ...formData, logo: "" };
                 setFormData(newData);
                 onUpdate(newData);
               }}
@@ -91,14 +104,18 @@ export default function SignatureForm({ onUpdate, data }: { onUpdate: (data: Sig
           )}
         </div>
         {formData.logo && (
-          <LogoSizeControl
-            value={formData.logoWidth}
-            onChange={handleLogoSizeChange}
+          <LogoControl
+            logoWidth={formData.logoWidth}
+            logoAlign={formData.logoAlign}
+            onChange={({ logoWidth, logoAlign }) => {
+
+              handleLogoConfigChange(logoWidth, logoAlign);
+            }}
           />
         )}
       </div>
 
-      <div>
+      <div className="mt-10">
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Primary Line e.g. Business Name
         </label>

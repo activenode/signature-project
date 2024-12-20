@@ -14,6 +14,7 @@ export interface SignatureData {
   logo: string;
   logoWidth: number;
   logoRatio: number;
+  logoAlign: 'left' | 'top';
 }
 
 function App() {
@@ -26,22 +27,23 @@ function App() {
     logo: '',
     logoWidth: 100,
     logoRatio: 1,
+    logoAlign: 'left',
   });
   const [showCode, setShowCode] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
   const hasData = objectHasData({
     ...signatureData,
-  }, ['logoWidth', 'logoRatio']);
-
+  }, ['logoWidth', 'logoRatio', 'logoAlign']);
 
 
   const generateHTML = () => {
+
+
     const fragment = document.createElement('template');
 
     fragment.innerHTML = previewRef.current?.querySelector('.prose')!.innerHTML as string;
 
-    // console.log('fragment', previewRef.current?.innerHTML);
 
     return fragment.innerHTML;
   }
