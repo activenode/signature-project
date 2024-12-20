@@ -40,9 +40,20 @@ function App() {
   const generateHTML = () => {
 
 
-    const fragment = document.createElement('template');
+    const fragment = document.createElement('div');
+
+
 
     fragment.innerHTML = previewRef.current?.querySelector('.prose')!.innerHTML as string;
+
+    const upperSpacingTr = document.createElement('tr');
+    const upperSpacingTd = document.createElement('td');
+    upperSpacingTd.style.fontSize = '17px';
+    upperSpacingTd.innerHTML = '&nbsp;';
+    upperSpacingTr.appendChild(upperSpacingTd);
+    const tbody = fragment.querySelector('tbody');
+
+    tbody!.prepend(upperSpacingTr);
 
 
     return fragment.innerHTML;
