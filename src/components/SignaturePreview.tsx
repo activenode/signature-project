@@ -9,12 +9,15 @@ interface SignatureData {
   email: string;
   logo: string;
   logoSize: number;
+
 }
 
 const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(({ data }, ref) => {
   // Calculate the actual width in pixels based on the max-width and percentage
   const logoWidth = (120 * data.logoSize) / 100;
 
+  const baseTextColor = '#6b7280';
+  const emailTextColor = '#2563eb';
   const hasTextData = objectHasData(data, ['logoSize', 'logo']);
 
 
@@ -42,7 +45,13 @@ const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(({ 
                   />
                 )}
               </td>
-              <td style={{ verticalAlign: 'top' }}>
+              <td style={{ verticalAlign: 'top', color: baseTextColor }}>
+                {!hasTextData && (
+                  <em className='opacity-50'>
+                    Edit the fields to see a preview
+                  </em>
+                )}
+
                 {data.primaryLine && (
                   <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#2563eb', marginBottom: '4px' }}>
                     {data.primaryLine}
@@ -54,18 +63,18 @@ const SignaturePreview = forwardRef<HTMLDivElement, { data: SignatureData }>(({ 
                   </div>
                 )}
                 {data.address && (
-                  <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px', whiteSpace: 'pre-line' }}>
+                  <div style={{ fontSize: '12px',  marginBottom: '4px', whiteSpace: 'pre-line' }}>
                     {data.address}
                   </div>
                 )}
                 {data.phone && (
-                  <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '2px' }}>
+                  <div style={{ fontSize: '12px',  marginBottom: '2px' }}>
                     Phone: {data.phone}
                   </div>
                 )}
                 {data.email && (
-                  <div style={{ fontSize: '12px', color: '#6b7280' }}>
-                    Email: <a href={`mailto:${data.email}`} style={{ color: '#2563eb', textDecoration: 'none' }}>{data.email}</a>
+                  <div style={{ fontSize: '12px' }}>
+                    Email: <a href={`mailto:${data.email}`} style={{ color: emailTextColor, textDecoration: 'none' }}>{data.email}</a>
                   </div>
                 )}
               </td>

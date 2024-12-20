@@ -87,6 +87,20 @@ export default function SignatureForm({ onUpdate }: { onUpdate: (data: Signature
               className="h-10 object-contain"
             />
           )}
+
+          {formData.logo && (
+            <button
+              type="button"
+              className="text-sm text-red-500 hover:text-red-700 bg-gray-200 p-2 rounded-md"
+              onClick={() => {
+                const newData = { ...formData, logo: '' };
+                setFormData(newData);
+                onUpdate(newData);
+              }}
+            >
+              Remove
+            </button>
+          )}
         </div>
         {formData.logo && (
           <LogoSizeControl
